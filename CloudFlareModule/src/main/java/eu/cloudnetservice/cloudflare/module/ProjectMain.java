@@ -1,18 +1,17 @@
 package eu.cloudnetservice.cloudflare.module;
 
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.Catcher;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
 import de.dytanic.cloudnetcore.api.CoreModule;
-import de.dytanic.cloudnetcore.network.components.Wrapper;
 import eu.cloudnetservice.cloudflare.module.config.ConfigCloudFlare;
 import eu.cloudnetservice.cloudflare.module.database.CloudFlareDatabase;
 import eu.cloudnetservice.cloudflare.module.listener.ProxyAddListener;
 import eu.cloudnetservice.cloudflare.module.listener.ProxyRemoveListener;
 import eu.cloudnetservice.cloudflare.module.services.CloudFlareService;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public final class ProjectMain extends CoreModule {
 	private static ProjectMain instance;
@@ -48,17 +47,11 @@ public final class ProjectMain extends CoreModule {
 		try {
 
 			CloudFlareService cloudFlareAPI = new CloudFlareService(configCloudFlare.load());
-			cloudFlareAPI.bootstrap(MapWrapper.transform(getCloud().getWrappers(), new Catcher<String, String>() {
-				@Override
-				public String doCatch(String key) {
-					return key;
-				}
-			}, new Catcher<SimpledWrapperInfo, Wrapper>() {
-				@Override
-				public SimpledWrapperInfo doCatch(Wrapper key) {
-					return new SimpledWrapperInfo(key.getServerId(), key.getNetworkInfo().getHostName());
-				}
-			}), getCloud().getProxyGroups(), cloudFlareDatabase);
+			cloudFlareAPI.bootstrap(getCloud().getWrappers().entrySet().stream()
+							.collect(Collectors.toMap(Map.Entry::getKey, e ->
+									new SimpledWrapperInfo(e.getValue().getServerId(),
+											e.getValue().getNetworkInfo().getHostName()))),
+					getCloud().getProxyGroups(), cloudFlareDatabase);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

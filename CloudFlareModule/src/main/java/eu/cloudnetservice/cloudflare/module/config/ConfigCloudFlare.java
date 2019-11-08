@@ -12,6 +12,8 @@ import eu.cloudnetservice.cloudflare.core.models.CloudFlareConfig;
 import eu.cloudnetservice.cloudflare.core.models.CloudFlareProxyGroup;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,16 +40,19 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
         File old = new File("local/cloudflare.json");
 
         if (old.exists()) {
-            CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare",
-                                                                                     new TypeToken<CloudFlareConfig>() {}.getType());
 
+            CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare",
+                    TypeToken.get(CloudFlareConfig.class).getType());
             new Document().append("configurations", new CloudFlareConfig[] {cloudFlareConfig}).saveAsConfig(path);
-            old.delete();
+            try {
+                Files.deleteIfExists(old.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Collection<CloudFlareConfig> cloudFlareConfigs = Document.loadDocument(path).getObject("configurations",
-                                                                                               new TypeToken<Collection<CloudFlareConfig>>() {}
-                                                                                                   .getType());
+                TypeToken.getParameterized(Collection.class,CloudFlareConfig.class).getType());
 
         return cloudFlareConfigs;
     }
