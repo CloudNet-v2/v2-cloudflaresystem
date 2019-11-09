@@ -9,26 +9,20 @@ import eu.cloudnetservice.cloudflare.module.listener.ProxyRemoveListener;
 import eu.cloudnetservice.cloudflare.module.services.CloudFlareService;
 
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public final class ProjectMain extends CoreModule {
-	private static ProjectMain instance;
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+public final class ModuleMain extends CoreModule {
+
+	private static ModuleMain instance;
 	private ConfigCloudFlare configCloudFlare;
 	private CloudFlareDatabase cloudFlareDatabase;
 
-	public static ProjectMain getInstance() {
+	public static ModuleMain getInstance() {
 		return instance;
 	}
 
 	public ConfigCloudFlare getConfigCloudFlare() {
 		return configCloudFlare;
-	}
-
-	public ExecutorService getExecutor() {
-		return executor;
 	}
 
 	public CloudFlareDatabase getCloudFlareDatabase() {
@@ -63,12 +57,10 @@ public final class ProjectMain extends CoreModule {
 
 	@Override
 	public void onShutdown() {
-
-		executor.shutdownNow();
-
 		try {
 			CloudFlareService.getInstance().shutdown(cloudFlareDatabase);
-		} catch (Exception ignored) {
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }
