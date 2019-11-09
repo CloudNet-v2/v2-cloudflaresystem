@@ -5,14 +5,12 @@ import de.dytanic.cloudnet.database.DatabaseUsable;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.database.Database;
 import de.dytanic.cloudnet.lib.database.DatabaseDocument;
-import de.dytanic.cloudnet.lib.utility.MapWrapper;
-import de.dytanic.cloudnet.lib.utility.Return;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import eu.cloudnetservice.cloudflare.core.models.CloudFlareConfig;
 import eu.cloudnetservice.cloudflare.core.models.PostResponse;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +40,7 @@ public class CloudFlareDatabase extends DatabaseUsable {
 
     public void putPostResponse(MultiValue<PostResponse, String> postResponse) {
         Document document = database.getDocument(CLOUDFLARE_CACHE);
-        document.append(postResponse.getFirst().getId(), postResponse);
+        document.append(postResponse.getFirst().getId(), Document.GSON.toJsonTree(postResponse,TypeToken.getParameterized(MultiValue.class,PostResponse.class,String.class).getType()));
         database.insert(document);
     }
 
@@ -81,27 +79,30 @@ public class CloudFlareDatabase extends DatabaseUsable {
             return;
         }
         Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
+        Map<String, PostResponse> responses = new HashMap<>();
+        Type t = TypeToken.getParameterized(Map.class, String.class, PostResponse.class).getType();
         if (document.contains("requests")) {
-
-            Map<String, PostResponse> responses = document.getObject("requests",
-                TypeToken.getParameterized(Map.class, String.class, PostResponse.class).getType());
+            responses = document.getObject("requests", t);
             responses.put(postResponse.getId(), postResponse);
-            document.append("requests", responses);
+            document.append("requests", Document.GSON.toJsonTree(responses, t));
         } else {
-            document.append("requests", MapWrapper.valueableHashMap(new Return<>(postResponse.getId(), postResponse)));
+            responses.put(postResponse.getId(), postResponse);
+            document.append("requests", Document.GSON.toJsonTree(responses, t));
         }
         database.insert(document);
     }
 
     public void remove(PostResponse postResponse) {
         Document document = database.getDocument(CLOUDFLARE_CACHE_REQ);
+        Type t = TypeToken.getParameterized(Map.class, String.class, PostResponse.class).getType();
+        Map<String, PostResponse> responses = new HashMap<>();
         if (document.contains("requests")) {
-            Map<String, PostResponse> responses = document.getObject("requests",
+            responses = document.getObject("requests",
                 TypeToken.getParameterized(Map.class, String.class, PostResponse.class).getType());
             responses.remove(postResponse.getId());
-            document.append("requests", responses);
+            document.append("requests", Document.GSON.toJsonTree(responses, t));
         } else {
-            document.append("requests", new HashMap<>(0));
+            document.append("requests", Document.GSON.toJsonTree(responses, t));
         }
 
         database.insert(document);
@@ -115,10 +116,10 @@ public class CloudFlareDatabase extends DatabaseUsable {
                 TypeToken.getParameterized(Map.class,
                     String.class,
                     TypeToken.getParameterized(MultiValue.class, PostResponse.class, String.class).getType()).getType());
-            document.append("requests", Collections.EMPTY_MAP);
+            document.append("requests", Document.GSON.toJsonTree(new HashMap<>(0), TypeToken.get(HashMap.class).getType()));
             database.insert(document);
             return responses;
         }
-        return Collections.EMPTY_MAP;
+        return new HashMap<>(0);
     }
 }
