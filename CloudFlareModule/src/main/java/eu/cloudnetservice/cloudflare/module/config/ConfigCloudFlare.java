@@ -43,7 +43,10 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
 
             CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare",
                 TypeToken.get(CloudFlareConfig.class).getType());
-            new Document().append("configurations", new CloudFlareConfig[] {cloudFlareConfig}).saveAsConfig(path);
+
+            new Document().append("configurations",
+                Document.GSON.toJsonTree(new CloudFlareConfig[] {cloudFlareConfig},
+                    TypeToken.get(CloudFlareConfig[].class).getType())).saveAsConfig(path);
             try {
                 Files.deleteIfExists(old.toPath());
             } catch (IOException e) {
@@ -51,10 +54,8 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
             }
         }
 
-        Collection<CloudFlareConfig> cloudFlareConfigs = Document.loadDocument(path).getObject("configurations",
+        return Document.loadDocument(path).getObject("configurations",
             TypeToken.getParameterized(Collection.class, CloudFlareConfig.class).getType());
-
-        return cloudFlareConfigs;
     }
 
 }

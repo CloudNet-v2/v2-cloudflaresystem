@@ -1,13 +1,11 @@
 package eu.cloudnetservice.cloudflare.module.services;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import de.dytanic.cloudnet.lib.MultiValue;
 import de.dytanic.cloudnet.lib.NetworkUtils;
 import de.dytanic.cloudnet.lib.server.ProxyGroup;
 import de.dytanic.cloudnet.lib.server.ProxyProcessMeta;
 import de.dytanic.cloudnet.lib.service.SimpledWrapperInfo;
-import de.dytanic.cloudnet.lib.utility.CollectionWrapper;
 import de.dytanic.cloudnet.lib.utility.document.Document;
 import eu.cloudnetservice.cloudflare.core.dns.DNSRecord;
 import eu.cloudnetservice.cloudflare.core.dns.DNSType;
@@ -25,6 +23,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -71,8 +70,7 @@ public class CloudFlareService {
         return ipARecords;
     }
 
-    @Deprecated
-    public boolean bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap,
+    public void bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap,
                              Map<String, ProxyGroup> groups,
                              CloudFlareDatabase cloudFlareDatabase) {
         for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values()) {
@@ -92,8 +90,10 @@ public class CloudFlareService {
                                 new Document().obj());
                             if (!ipARecords.containsKey(wrapper)) {
                                 PostResponse postResponse = this.createRecord(cloudFlareConfig, dnsRecord);
-                                ipARecords.put(postResponse.getId(), new MultiValue<>(postResponse, wrapper));
-                                cloudFlareDatabase.putPostResponse(new MultiValue<>(postResponse, wrapper));
+                                if (postResponse != null) {
+                                    ipARecords.put(postResponse.getId(), new MultiValue<>(postResponse, wrapper));
+                                    cloudFlareDatabase.putPostResponse(new MultiValue<>(postResponse, wrapper));
+                                }
                                 NetworkUtils.sleepUninterruptedly(400);
                             }
                         }
@@ -101,7 +101,6 @@ public class CloudFlareService {
                 }
             }
         }
-        return true;
     }
 
     /**
@@ -109,7 +108,7 @@ public class CloudFlareService {
      *
      * @param postResponse the cached information about the dns record
      */
-    public void deleteRecord(PostResponse postResponse) {
+    private void deleteRecord(PostResponse postResponse) {
 
         try {
             HttpURLConnection delete = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + postResponse.getCloudFlareConfig()
@@ -145,7 +144,7 @@ public class CloudFlareService {
      *
      * @return the response from CloudFlare or null on failure
      */
-    public PostResponse createRecord(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord) {
+    private PostResponse createRecord(CloudFlareConfig cloudFlareConfig, DNSRecord dnsRecord) {
         try {
             HttpURLConnection httpPost = (HttpURLConnection) new URL(PREFIX_URL + "zones/" + cloudFlareConfig.getZoneId() + "/dns_records").openConnection();
             String values = NetworkUtils.GSON.toJson(dnsRecord);
@@ -195,10 +194,10 @@ public class CloudFlareService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new JsonParser().parse(stringBuilder.substring(0)).getAsJsonObject();
+        return Document.GSON.fromJson(stringBuilder.substring(0), JsonObject.class).getAsJsonObject();
     }
 
-    public boolean shutdown(CloudFlareDatabase cloudFlareDatabase) {
+    public void shutdown(CloudFlareDatabase cloudFlareDatabase) {
         for (MultiValue<PostResponse, String> postResponse : this.bungeeSRVRecords.values()) {
             try {
                 this.deleteRecord(postResponse.getFirst());
@@ -216,7 +215,6 @@ public class CloudFlareService {
             this.deleteRecord(id.getFirst());
             NetworkUtils.sleepUninterruptedly(500);
         }
-        return true;
     }
 
     /**
@@ -258,8 +256,10 @@ public class CloudFlareService {
                     }
                     PostResponse postResponse = this.createRecord(cloudFlareConfig, srvRecord);
                     cloudFlareDatabase.add(postResponse);
-                    this.bungeeSRVRecords.put(postResponse.getId(),
-                        new MultiValue<>(postResponse, proxyServer.getServiceId().getServerId()));
+                    if (postResponse != null) {
+                        this.bungeeSRVRecords.put(postResponse.getId(),
+                            new MultiValue<>(postResponse, proxyServer.getServiceId().getServerId()));
+                    }
                     NetworkUtils.sleepUninterruptedly(500);
                 }
             }
@@ -273,8 +273,8 @@ public class CloudFlareService {
      *
      * @return the CloudFlareProxyGroup with the given group or null
      */
-    public CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group) {
-        return CollectionWrapper.filter(cloudFlareConfig.getGroups(), value -> value.getName().equals(group));
+    private CloudFlareProxyGroup cloudFlareProxyGroup(CloudFlareConfig cloudFlareConfig, String group) {
+        return cloudFlareConfig.getGroups().stream().filter(value -> value.getName().equals(group)).findFirst().orElse(null);
     }
 
     /**
@@ -286,11 +286,10 @@ public class CloudFlareService {
     public void removeProxy(ProxyProcessMeta proxyServer, CloudFlareDatabase cloudFlareDatabase) {
         //if (!bungeeSRVRecords.containsKey(proxyServer.getServiceId().getServerId())) return;
 
-        Collection<MultiValue<PostResponse, String>> postResponses = CollectionWrapper.filterMany(bungeeSRVRecords.values(),
-            postResponseStringMultiValue -> postResponseStringMultiValue
-                .getSecond()
-                .equalsIgnoreCase(proxyServer.getServiceId()
-                                             .getServerId()));
+        Collection<MultiValue<PostResponse, String>> postResponses = bungeeSRVRecords.values().stream().filter(postResponseStringMultiValue -> postResponseStringMultiValue
+            .getSecond()
+            .equalsIgnoreCase(proxyServer.getServiceId()
+                                         .getServerId())).collect(Collectors.toList());
 
         //MultiValue<PostResponse, String> postResponse = bungeeSRVRecords.get(proxyServer.getServiceId().getServerId());
             /*
