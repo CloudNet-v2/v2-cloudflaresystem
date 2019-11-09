@@ -160,3 +160,4 @@ local.properties
 /.idea/compiler.xml
 /.idea/.gitignore
 /.idea/encodings.xml
+!/.idea/inspectionProfiles/Project_Default.xml
