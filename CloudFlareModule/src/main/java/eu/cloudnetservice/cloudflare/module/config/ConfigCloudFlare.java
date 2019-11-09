@@ -25,14 +25,14 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
 
     public ConfigCloudFlare() {
         super(new Document("configurations",
-                           Collections.singletonList(new CloudFlareConfig(false,
-                                                                          "example@gmail.com",
-                                                                          "token",
-                                                                          "example.com",
-                                                                          "zone",
-                                                                          Collections.singletonList(new CloudFlareProxyGroup("Bungee",
-                                                                                                                             "server"))))),
-              Paths.get("local/cloudflare_cfg.json"));
+                Collections.singletonList(new CloudFlareConfig(false,
+                    "example@gmail.com",
+                    "token",
+                    "example.com",
+                    "zone",
+                    Collections.singletonList(new CloudFlareProxyGroup("Bungee",
+                        "server"))))),
+            Paths.get("local/cloudflare_cfg.json"));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
         if (old.exists()) {
 
             CloudFlareConfig cloudFlareConfig = Document.loadDocument(old).getObject("cloudflare",
-                    TypeToken.get(CloudFlareConfig.class).getType());
+                TypeToken.get(CloudFlareConfig.class).getType());
             new Document().append("configurations", new CloudFlareConfig[] {cloudFlareConfig}).saveAsConfig(path);
             try {
                 Files.deleteIfExists(old.toPath());
@@ -52,7 +52,7 @@ public class ConfigCloudFlare extends ConfigAbstract implements ILoader<Collecti
         }
 
         Collection<CloudFlareConfig> cloudFlareConfigs = Document.loadDocument(path).getObject("configurations",
-                TypeToken.getParameterized(Collection.class,CloudFlareConfig.class).getType());
+            TypeToken.getParameterized(Collection.class, CloudFlareConfig.class).getType());
 
         return cloudFlareConfigs;
     }
