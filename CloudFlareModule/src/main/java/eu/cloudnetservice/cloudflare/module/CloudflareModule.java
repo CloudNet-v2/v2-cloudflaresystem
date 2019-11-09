@@ -11,13 +11,13 @@ import eu.cloudnetservice.cloudflare.module.services.CloudFlareService;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class ModuleMain extends CoreModule {
+public final class CloudflareModule extends CoreModule {
 
-	private static ModuleMain instance;
+	private static CloudflareModule instance;
 	private ConfigCloudFlare configCloudFlare;
 	private CloudFlareDatabase cloudFlareDatabase;
 
-	public static ModuleMain getInstance() {
+	public static CloudflareModule getInstance() {
 		return instance;
 	}
 
