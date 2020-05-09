@@ -71,8 +71,8 @@ public class CloudFlareService {
     }
 
     public void bootstrap(Map<String, SimpledWrapperInfo> wrapperInfoMap,
-                             Map<String, ProxyGroup> groups,
-                             CloudFlareDatabase cloudFlareDatabase) {
+                          Map<String, ProxyGroup> groups,
+                          CloudFlareDatabase cloudFlareDatabase) {
         for (MultiValue<PostResponse, String> id : cloudFlareDatabase.getAndRemove().values()) {
             this.deleteRecord(id.getFirst());
         }

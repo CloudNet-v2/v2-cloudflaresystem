@@ -7,8 +7,9 @@ import eu.cloudnetservice.cloudflare.module.services.CloudFlareService;
 
 public class ProxyAddListener implements IEventListener<ProxyAddEvent> {
 
-	@Override
-	public void onCall(ProxyAddEvent event) {
-		CloudflareModule.getInstance().getCloud().getScheduler().runTaskAsync(() -> CloudFlareService.getInstance().addProxy(event.getProxyServer().getProcessMeta(), CloudflareModule.getInstance().getCloudFlareDatabase()));
-	}
+    @Override
+    public void onCall(ProxyAddEvent event) {
+        CloudflareModule.getInstance().getCloud().getScheduler().runTaskAsync(() -> CloudFlareService.getInstance().addProxy(event.getProxyServer().getProcessMeta(),
+            CloudflareModule.getInstance().getCloudFlareDatabase()));
+    }
 }

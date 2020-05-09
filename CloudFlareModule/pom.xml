@@ -15,7 +15,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>${plugin.shade.version}</version>
                 <configuration>
                 </configuration>
                 <executions>
@@ -40,7 +40,7 @@
         <dependency>
             <groupId>eu.cloudnetservice</groupId>
             <artifactId>CloudFlareCore</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${dependency.cloudflarecore.version}</version>
         </dependency>
         <dependency>
             <groupId>de.dytanic.cloudnet</groupId>
