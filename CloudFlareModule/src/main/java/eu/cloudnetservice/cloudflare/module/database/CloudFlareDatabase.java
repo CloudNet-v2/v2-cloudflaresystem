@@ -40,7 +40,9 @@ public class CloudFlareDatabase extends DatabaseUsable {
 
     public void putPostResponse(MultiValue<PostResponse, String> postResponse) {
         Document document = database.getDocument(CLOUDFLARE_CACHE);
-        document.append(postResponse.getFirst().getId(), Document.GSON.toJsonTree(postResponse,TypeToken.getParameterized(MultiValue.class,PostResponse.class,String.class).getType()));
+        document.append(postResponse.getFirst().getId(),
+            Document.GSON.toJsonTree(postResponse,
+                TypeToken.getParameterized(MultiValue.class, PostResponse.class, String.class).getType()));
         database.insert(document);
     }
 

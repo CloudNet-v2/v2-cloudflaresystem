@@ -7,9 +7,9 @@ import eu.cloudnetservice.cloudflare.module.services.CloudFlareService;
 
 public class ProxyRemoveListener implements IEventListener<ProxyRemoveEvent> {
 
-	@Override
-	public void onCall(ProxyRemoveEvent event) {
-		CloudflareModule.getInstance().getCloud().getScheduler().runTaskAsync(() -> CloudFlareService.getInstance().removeProxy(event.getProxyServer().getProcessMeta(),
-				CloudflareModule.getInstance().getCloudFlareDatabase()));
-	}
+    @Override
+    public void onCall(ProxyRemoveEvent event) {
+        CloudflareModule.getInstance().getCloud().getScheduler().runTaskAsync(() -> CloudFlareService.getInstance().removeProxy(event.getProxyServer().getProcessMeta(),
+            CloudflareModule.getInstance().getCloudFlareDatabase()));
+    }
 }
