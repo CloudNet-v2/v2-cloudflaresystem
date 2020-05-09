@@ -10,18 +10,15 @@
 [![GitHub release](https://img.shields.io/github/release/CloudNetService/v2-cloudflaresystem.svg)](https://github.com/CloudNetService/v2-cloudflaresystem/releases)
 
 
-# Clouflare System | The Cloud Network Environment Technology 2 Clouflare System
+# Clouflare System | The Cloud Network Environment Technology 2
 ![Image of CloudNet](https://cdn.discordapp.com/attachments/325383142464552972/354670548292206594/CloudNet.png)
 
-This is the Clouflare System for CloudNet 2.2.0
+This is the Clouflare integration for CloudNet 2.2.0
  
 
  ### Support
- 
-  * Spigot-Support » 1.7.10 - 1.14
-    * PaperSpigot, TacoSpigot, Hose, Torch
-  * BungeeCord-Support » 1.7.10 - 1.14
-    * Flexpipe, HexaCord, Waterfall, TraverTine
+  * BungeeCord-Support » 1.8 - 1.15.X
+    * Also all forks from BungeeCord
     
 ### Discord
  *  [Discord Invite](https://discord.gg/CPCWr7w)
