@@ -1,0 +1,16 @@
+{
+  "main": "eu.cloudnetservice.cloudnet.v2.modules.cloudflare.module.CloudflareModule",
+  "version": "${cloudflare.version}",
+  "groupId": "eu.cloudnetservice.cloudnet.v2.modules",
+  "name": "CloudflareSystem",
+  "description": "CloudFlare integration for CloudNet proxies",
+  "website": "https://cloudnetservice.eu/",
+  "requiredCloudNetVersion": ">=2.2.0-SNAPSHOT",
+  "dependencies": [],
+  "authors": [
+    {
+      "name": "GiantTree",
+      "role": "Developer"
+    }
+  ]
+}

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>CloudflareSystem</artifactId>
-        <groupId>eu.cloudnetservice</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <groupId>eu.cloudnetservice.cloudnet.v2.modules</groupId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -38,14 +38,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.cloudnetservice</groupId>
+            <groupId>eu.cloudnetservice.cloudnet.v2.modules</groupId>
             <artifactId>CloudFlareCore</artifactId>
             <version>${dependency.cloudflarecore.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.dytanic.cloudnet</groupId>
-            <artifactId>cloudnet-core</artifactId>
-            <version>${dependency.cloudnet.version}</version>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-module</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.cloudnetservice.cloudnet.v2</groupId>
+            <artifactId>cloudnet-master</artifactId>
+            <version>2.2.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
