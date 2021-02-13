@@ -94,7 +94,11 @@ public final class CloudFlareService {
                 try {
                     final ListDnsRecords request = new ListDnsRecords();
                     final ListDnsRecordsResponse response = request.call(cloudFlareConfig);
-                    records = response.getResult();
+                    if (response.isSuccess()) {
+                        records = response.getResult();
+                    } else {
+                        this.module.getModuleLogger().warning(String.format("Error(s) when listing DNS records: %s", response.getErrors()));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -210,7 +214,7 @@ public final class CloudFlareService {
         try {
             final DeleteDnsRecordResponse response = request.call(cloudFlareConfig);
             if (response.isSuccess()) {
-                this.module.getModuleLogger().finer(String.format("DNSRecord [%s] was removed%n", id));
+                this.module.getModuleLogger().info(String.format("DNSRecord [%s] was removed%n", id));
             } else {
                 throw new CloudFlareDNSRecordException(String.format("Failed to delete DNSRecord%n%s", response.toString()));
             }
@@ -235,7 +239,7 @@ public final class CloudFlareService {
             final CreateDnsRecordResponse response = request.call(cloudFlareConfig);
 
             if (response.isSuccess()) {
-                this.module.getModuleLogger().finer(String.format("DNSRecord [%s/%s] was created%n",
+                this.module.getModuleLogger().info(String.format("DNSRecord [%s/%s] was created%n",
                     response.getResult().getName(),
                     response.getResult().getType()));
             } else {
