@@ -32,6 +32,8 @@ public class ListDnsRecords extends CloudflareEndpoint<Void, ListDnsRecordsRespo
                                  return listDnsRecords.call(config);
                              } catch (IOException e) {
                                  e.printStackTrace();
+                                 //suppressed as we check for null later on
+                                 //noinspection ReturnOfNull
                                  return null;
                              }
                          })

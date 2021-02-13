@@ -67,7 +67,7 @@ If you would like to contribute to this repository, feel free to fork the repo a
     <dependency>
         <groupId>eu.cloudnetservice</groupId>
         <artifactId>CloudflareSystem</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
         <scope>provided</scope>
     </dependency>
 </dependencies>
@@ -81,6 +81,6 @@ repositories {
     }
 }
 dependencies {
-    compileOnly group: 'eu.cloudnetservice', name: 'CloudflareSystem', version: '1.0-SNAPSHOT'
+    compileOnly group: 'eu.cloudnetservice', name: 'CloudflareSystem', version: '1.0.0-SNAPSHOT'
 }
 ```

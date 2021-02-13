@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CloudFlareCore/CloudFlareCore.iml" filepath="$PROJECT_DIR$/CloudFlareCore/CloudFlareCore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CloudFlareModule/CloudFlareModule.iml" filepath="$PROJECT_DIR$/CloudFlareModule/CloudFlareModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/v2-cloudflaresystem.iml" filepath="$PROJECT_DIR$/.idea/v2-cloudflaresystem.iml" />
+    </modules>
+  </component>
+</project>
