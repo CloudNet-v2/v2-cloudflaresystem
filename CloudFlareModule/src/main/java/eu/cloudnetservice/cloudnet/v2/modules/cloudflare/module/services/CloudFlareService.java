@@ -152,13 +152,7 @@ public final class CloudFlareService {
                                             builder.type("AAAA");
                                         }
 
-                                        final CreateDnsRecord create = new CreateDnsRecord(cloudFlareConfig, builder.build());
-
-                                        try {
-                                            create.call(cloudFlareConfig);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
+                                        this.createRecord(cloudFlareConfig, builder.build());
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                         return;
